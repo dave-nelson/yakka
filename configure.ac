@@ -10,6 +10,7 @@ AC_ISC_POSIX
 AC_PROG_CC
 AM_PROG_CC_STDC
 AC_HEADER_STDC
+AC_HEADER_ASSERT
 
 AM_PROG_LIBTOOL
 
@@ -17,7 +18,7 @@ PKG_CHECK_MODULES(YAKKA, [apr-1 libpcre])
 
 AC_OUTPUT([
 Makefile
-yakka/libyakka-0.1.pc
+yakka/libyakka-0.pc
 yakka/Makefile
 test/Makefile
 ])

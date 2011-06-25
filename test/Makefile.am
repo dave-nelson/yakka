@@ -1,6 +1,6 @@
 INCLUDES  = -I$(top_srcdir)
 
-test_ldadd = $(YAKKA_LIBS) $(top_builddir)/yakka/libyakka.la
+test_ldadd = $(YAKKA_LIBS) $(top_builddir)/yakka/libyakka-0.la
 
 AM_CPPFLAGS = \
 	-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \
@@ -11,17 +11,20 @@ AM_CFLAGS =\
 	 -Wall\
 	 -g
 
-noinst_PROGRAMS = test
+test_programs = 		\
+	test_error
 
-test_SOURCES = \
-	main.c
-test_LDFLAGS = 
-test_LDADD = $(test_ldadd)
+noinst_PROGRAMS = $(test_programs)
 
-check: $(noinst_PROGRAMS)
+test_error_SOURCES = test_error.c
+test_error_LDADD = $(test_ldadd)
+
+check: $(test_programs)
 	teststatus=0; 						\
 	progfailed=""; 						\
-	for p in $(noinst_PROGRAMS); do 			\
+	for p in $(test_programs); do				\
+		echo "----------";				\
+		echo "Test suite: $$p";				\
 		./$$p; 						\
 		status=$$?; 					\
 		if test $$status != 0; then 			\
@@ -29,6 +32,7 @@ check: $(noinst_PROGRAMS)
 			progfailed="$$progfailed $$p"; 		\
 		fi; 						\
 	done;							\
+	echo "----------";					\
 	if test $$teststatus != 0; then				\
 		echo "Programs failed:$$progfailed";		\
 	fi;							\

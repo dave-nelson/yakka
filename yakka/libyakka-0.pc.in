@@ -3,11 +3,11 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 datarootdir=@datarootdir@
 datadir=@datadir@
-includedir=@includedir@/libyakka-0.1
+includedir=@includedir@
 
 Name: libyakka
 Description: Sample library created by Anjuta project wizard.
 Version: @VERSION@
 Requires: 
-Libs: -L${libdir} -lyakka
-Cflags: -I${includedir}
+Libs: -L${libdir} -lyakka-0
+Cflags: -I${includedir}/yakka-0

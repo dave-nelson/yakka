@@ -1,7 +1,3 @@
-## Process this file with automake to produce Makefile.in
-
-## Created by Anjuta
-
 AM_CPPFLAGS = \
 	-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \
 	-DPACKAGE_SRC_DIR=\""$(srcdir)"\" \
@@ -11,21 +7,33 @@ AM_CFLAGS =\
 	 -Wall\
 	 -g
 
-lib_LTLIBRARIES = libyakka.la
+lib_LTLIBRARIES = libyakka-0.la
 
+libyakka_0_la_SOURCES = 		\
+	Error.c			\
+	MethodList.c		\
+	Object.c		\
+	Runtime.c		\
+	WeakRef.c
 
-libyakka_la_SOURCES = \
-	lib.c
+libyakka_0_la_LDFLAGS = 
 
-libyakka_la_LDFLAGS = 
+libyakka_0_la_LIBADD = $(YAKKA_LIBS)
 
-libyakka_la_LIBADD = $(YAKKA_LIBS)
-
-include_HEADERS = \
-	yakka.h
+yakkaincludedir = $(includedir)/yakka-0/yakka
+yakkainclude_HEADERS = 		\
+	Yakka.h			\
+	Error.h			\
+	Error-protected.h	\
+	MethodList.h		\
+	Object.h		\
+	Object-protected.h	\
+	Runtime.h		\
+	WeakRef.h		\
+	WeakRef-protected.h
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = libyakka-0.1.pc
+pkgconfig_DATA = libyakka-0.pc
 
 EXTRA_DIST = \
-	libyakka-0.1.pc.in
+	libyakka-0.pc.in

@@ -3,17 +3,10 @@ SUBDIRS = yakka \
 
 ACLOCAL_AMFLAGS = -I m4
 
-yakkadocdir = ${prefix}/doc/yakka
-yakkadoc_DATA = \
+dist_doc_DATA = \
 	README\
 	COPYING\
 	AUTHORS\
 	ChangeLog\
 	INSTALL\
 	NEWS
-
-EXTRA_DIST = $(yakkadoc_DATA)
-
-# Remove doc directory on uninstall
-uninstall-local:
-	-rm -r $(yakkadocdir)
