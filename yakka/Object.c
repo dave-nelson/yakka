@@ -12,7 +12,6 @@ void y_clear_object (void * self, bool unref_objects);
 apr_status_t y_cleanup_of_last_resort (void * data);
 void y_Object_init_type (y_Runtime * rt, void * type, void * super_type);
 
-
 y_Object *
 y_Object_new (y_Runtime * rt,
         y_Error ** error)
@@ -149,12 +148,15 @@ y_clear_object (void * self, bool unref_objects)
     }
 }
 
-void
+void *
 y_assign (void *to, const void *from,
         y_Error ** error)
 {
+    bool failed = false;
+    void * result = NULL;
+
     if ( (! to) || (! from) )
-        return;
+        return NULL;
 
     y_ObjectClass * type = ((y_Object *)to)->type;
     y_AssignMethodList * assign = type->assign;
@@ -166,14 +168,20 @@ y_assign (void *to, const void *from,
             struct y_AssignMethod method = assign->methods[i];
 
             if ( y_bless (to, method.type) && y_bless (from, method.type)) {
-                method.exec (to, from, error);
-                if ( error && *error )
+                if ( (! method.exec (to, from, error)) ||
+                        (error && *error) ) {
+                    failed = true;
                     break;
+                }
             }
         }
         y_bless (to, type);
         y_bless (from, type);
+        if ( ! failed ) {
+            result = to;
+        }
     }
+    return result;
 }
 
 void *
@@ -186,8 +194,7 @@ y_copy (const void * self,
     void * to = y_create (obj->protect->rt, obj->type, error);
     if ( error && *error )
         goto cleanup;
-    y_assign(to, obj, error);
-    if ( error && *error )
+    if ( (! y_assign(to, obj, error)) || (error && *error) )
         goto cleanup;
 
     return to;
@@ -338,12 +345,40 @@ y_destroy (void * self)
     }
 }
 
+void *
+y_get_implementation (const void * self, int interface_id)
+{
+    y_ObjectClass * type = TYPE_AS_OBJECT (y_OBJECT (self));
+    void * implementation = NULL;
+
+    if ( type->interfaces && type->interfaces->size > interface_id ) {
+        implementation = type->interfaces->vtables[interface_id];
+    }
+
+    return implementation;
+}
+
+void *
+y_get_implementation_by_name (const void * self, const char * name)
+{
+    void * impl = NULL;
+    
+    if ( self && name ) {
+        int id = y_Runtime_get_interface_id (y_get_runtime (self), name);
+        if ( id > 0 ) {
+            impl = y_get_implementation (self, id);
+        }
+    }
+    return impl;
+}
+
 void
 y_init_type (y_Runtime * rt, void * type, void * super_type, const char * name, 
         size_t class_size, size_t instance_size, size_t protected_size,
         void (* init_method) (void * self, y_Runtime * rt, apr_pool_t * pool,
             y_Error ** error),
-        void (* assign_method) (void * to, const void * from, y_Error ** error),
+        void * (* assign_method) (void * to, const void * from,
+            y_Error ** error),
         void (* clear_method) (void * self, bool unref_objects))
 {
     y_ObjectClass * object_type = (y_ObjectClass *)type;
@@ -351,6 +386,7 @@ y_init_type (y_Runtime * rt, void * type, void * super_type, const char * name,
 
     object_type->super = super_type;
     object_type->name = name;
+    object_type->rt = rt;
     object_type->class_size = class_size;
     object_type->instance_size = instance_size;
     object_type->protected_size = protected_size;
@@ -379,6 +415,7 @@ y_init_type (y_Runtime * rt, void * type, void * super_type, const char * name,
                 clear_method
                 );
     }
+    /* TODO: interfaces */
 }
 
 void

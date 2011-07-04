@@ -17,7 +17,16 @@ typedef struct y_Runtime {
     apr_pool_t **        pool_buffer;
     int                  pool_buffer_size;
     int                  pool_buffer_pos;
+    /* Interface identifiers */
+    apr_hash_t         * interface_ids;
+    int                  interface_size;
 } y_RuntimePrivate;
+
+/**
+ * For internal use only (i.e. while the runtime is already locked): get the 
+ * interface ID for the provided name.
+ */
+int y_Runtime_get_interface_id_nolock (y_Runtime * rt, const char * name);
 
 y_Runtime *
 y_Runtime_new (apr_pool_t * global_pool, apr_pool_t * objects_pool, 
@@ -61,6 +70,9 @@ y_Runtime_new (apr_pool_t * global_pool, apr_pool_t * objects_pool,
     }
 #endif /* APR_HAS_THREADS */
 
+    rt->interface_ids = apr_hash_make (gpool);
+    rt->interface_size = 0;
+
     return rt;
 }
 
@@ -94,16 +106,80 @@ y_erase_type (void * data)
     return APR_SUCCESS;
 }
 
+int
+y_Runtime_get_interface_id_nolock (y_Runtime * rt, const char * name)
+{
+    int * id = NULL;
+
+    id = (int *)apr_hash_get (rt->interface_ids, name, APR_HASH_KEY_STRING);
+    if ( ! id ) {
+        id = apr_pcalloc (rt->global_pool, sizeof (int));
+        *id = ++(rt->interface_size);
+        apr_hash_set (rt->interface_ids, name, APR_HASH_KEY_STRING, id);
+    }
+    return (id ? *id : 0);
+}
+
+int
+y_Runtime_get_interface_id (y_Runtime * rt, const char * name)
+{
+    int * id_ptr = NULL;
+    int id = 0;
+
+    id_ptr = (int *)apr_hash_get (rt->interface_ids, name, APR_HASH_KEY_STRING);
+    if ( ! id_ptr ) {
+        y_Runtime_lock (rt);
+        id = y_Runtime_get_interface_id_nolock (rt, name);
+        y_Runtime_unlock (rt);
+    }
+    else {
+        id = *id_ptr;
+    }
+    return id;
+}
+
+y_Interfaces *
+y_Runtime_pack_interfaces (y_Runtime * rt, y_InterfaceSpec * specs)
+{
+    int i = 0;
+    int max_id = 0;
+    y_Interfaces * interfaces = NULL;
+
+    while ( specs[i].name ) {
+        int spec_id;
+        y_InterfaceSpec spec = specs[i];
+        spec_id = y_Runtime_get_interface_id_nolock (rt, spec.name);
+        if ( spec_id > max_id ) {
+            max_id = spec_id;
+        }
+        i++;
+    }
+    if ( max_id > 0 ) {
+        interfaces = apr_pcalloc (rt->global_pool, sizeof (y_Interfaces));
+        interfaces->size = max_id + 1;
+        interfaces->vtables = apr_pcalloc (rt->global_pool,
+                (interfaces->size) * sizeof (void *));
+        i = 0;
+        while ( specs[i].name ) {
+            y_InterfaceSpec spec = specs[i];
+            interfaces->
+                vtables[y_Runtime_get_interface_id_nolock (rt, spec.name)] =
+                spec.vtable;
+            i++;
+        }
+    }
+    return interfaces;
+}
+
 void *
 y_Runtime_init_type (y_Runtime * rt, const char * type_name,
         int type_size, void * super_type,
         void (* init_type) (y_Runtime * rt, void * type, void * super_type),
         void ** type_location)
 {
-    y_ObjectClass * type;
+    y_ObjectClass * type = NULL;
 
     y_Runtime_lock (rt);
-    /* type = (y_ObjectClass *)y_Runtime_get_type (rt, type_name); */
     if ( ! *type_location ) {
         /* Allocate memory for the type and copy the supertype over it */
         type = apr_pcalloc (rt->global_pool, type_size);
@@ -199,4 +275,3 @@ y_Runtime_destroy (y_Runtime * rt)
         apr_pool_destroy (rt->global_pool);
     }
 }
-

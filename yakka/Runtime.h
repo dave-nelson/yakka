@@ -10,8 +10,10 @@
  */
 #include <apr_pools.h>
 #include <stdbool.h>
+#include "Interface.h"
 
 typedef struct y_Runtime y_Runtime;
+struct y_ObjectClass;
 
 struct y_Error;
 
@@ -74,7 +76,7 @@ void * y_Runtime_init_type (y_Runtime * rt, const char * type_name,
 
 /**
  * Convenience macro: get or initialise a subtype.
- *
+ 
  * This macro generates code that first searches for the class identified by 
  * name.  If found, it is returned.  Otherwise the type is initialised and 
  * returned.
@@ -84,6 +86,7 @@ void * y_Runtime_init_type (y_Runtime * rt, const char * type_name,
  * \param  Class  The class' struct.
  * \param  get_super  Method to get the super type.
  * \param  type_init  Class initialisation method.
+ * \param  type  Pointer to the memory location for the class structure.
  * \return  The type identified by type_name.
  */
 #define y_GET_OR_CREATE_SUBTYPE(rt, type_name, Class, get_super, type_init) \
@@ -109,6 +112,11 @@ apr_pool_t * y_Runtime_create_object_pool (y_Runtime * rt,
         struct y_Error ** error);
 
 void y_Runtime_free_object_pool (y_Runtime * rt, apr_pool_t * pool);
+
+int y_Runtime_get_interface_id (y_Runtime * rt, const char * name);
+
+y_Interfaces * y_Runtime_pack_interfaces (y_Runtime * rt,
+        y_InterfaceSpec * specs);
 
 /**
  * Lock the resource manager.

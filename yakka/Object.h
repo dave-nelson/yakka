@@ -54,13 +54,31 @@ void y_clear (void * self);
 
 /**
  * Create a copy of the given object.
+ *
+ * A new object of the same type as the provided instance will be instantiated, 
+ * and all values will be copied to it.  It will then be returned.
+ *
+ * @param  self  The instance to which attributes should be copied.
+ * @param  error  An error location, to be populated with any errors that may 
+ * occur.  If NULL no errors will be reported.
+ * @return  A pointer to the newly created instance, or NULL if copying is 
+ * forbidden.
  */
 void * y_copy (const void * self, struct y_Error ** error);
 
 /**
- * Assign from one object to another of the same type
+ * Assign from one object to another of the same type.
+ *
+ * Assignment is only applicable where two instance objects are of the same 
+ * type.
+ *
+ * @param  to  The instance to which attributes should be copied.
+ * @param  from  The instance from which attributes should be copied.
+ * @param  error  An error location, to be populated with any errors that may 
+ * occur.  If NULL no errors will be reported.
+ * @return  A pointer to the "to" instance, or NULL if assignment is forbidden.
  */
-void y_assign (void * to, const void * from, struct y_Error ** error);
+void * y_assign (void * to, const void * from, struct y_Error ** error);
 
 /**
  * Destroy an object: clear it then free its allocated memory.
@@ -104,6 +122,36 @@ void * y_weak_ref (void * self);
  * Get the runtime from an object.
  */
 struct y_Runtime * y_get_runtime (const void * self);
+
+/**
+ * Get the implementation that an instance's class provides for an interface, 
+ * by interface ID.
+ *
+ * This method will return NULL if the instance's class doesn't provide an 
+ * implementation for the specified interface.
+ *
+ * @param  self  An object instance.
+ * @param  name  Name of an interface.
+ * @return  A pointer to the instance's implementation of the specified 
+ * interface, or NULL if not implemented.
+ */
+void * y_get_implementation (const void * self, int interface_id);
+
+/**
+ * Get the implementation that an instance's class provides for an interface, 
+ * by name.
+ *
+ * This method will return NULL if the instance's class doesn't provide an 
+ * implementation for the specified interface.  Note that this method is 
+ * slightly less efficient than y_get_implementation because it is necessary to 
+ * look up the interface ID for the corresponding name.
+ *
+ * @param  self  An object instance.
+ * @param  name  Name of an interface.
+ * @return  A pointer to the instance's implementation of the specified 
+ * interface, or NULL if not implemented.
+ */
+void * y_get_implementation_by_name (const void * self, const char * name);
 
 #define y_SAFE_CAST_INSTANCE(self, get_type, cast_as)               \
     ( (self && y_is_a (self, get_type (y_get_runtime (self)))) ?    \

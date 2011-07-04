@@ -4,12 +4,11 @@ AM_CPPFLAGS = \
 	-DPACKAGE_DATA_DIR=\""$(datadir)"\" $(YAKKA_CFLAGS)
 
 AM_CFLAGS =\
-	 -Wall\
-	 -g
+	 -Wall
 
 lib_LTLIBRARIES = libyakka-0.la
 
-libyakka_0_la_SOURCES = 		\
+libyakka_0_la_SOURCES =		\
 	Error.c			\
 	MethodList.c		\
 	Object.c		\
@@ -25,6 +24,7 @@ yakkainclude_HEADERS = 		\
 	Yakka.h			\
 	Error.h			\
 	Error-protected.h	\
+	Interface.h		\
 	MethodList.h		\
 	Object.h		\
 	Object-protected.h	\

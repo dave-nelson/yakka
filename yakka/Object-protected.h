@@ -11,6 +11,7 @@
 #include "Object.h"
 #include "MethodList.h"
 #include "Error.h"
+#include "Interface.h"
 #include <apr_thread_mutex.h>
 #include <assert.h>
 
@@ -70,7 +71,7 @@ typedef struct y_AssignMethodList {
     size_t    size;
     struct y_AssignMethod {
         void    * type;
-        void   (* exec) (void * to, const void * from,
+        void * (* exec) (void * to, const void * from,
                 y_Error ** error);
     } * methods;
 } y_AssignMethodList;
@@ -97,6 +98,7 @@ typedef struct y_ClearMethodList {
 struct y_ObjectClass {
     void               * super;
     const char         * name;
+    y_Runtime          * rt;
     size_t               class_size;
     size_t               instance_size;  /* Size of an instance */
     size_t               protected_size;   /* Size of the protected data structure */
@@ -104,6 +106,7 @@ struct y_ObjectClass {
     y_InitMethodList   * init;
     y_AssignMethodList * assign;
     y_ClearMethodList  * clear;
+    y_Interfaces       * interfaces;
 };
 
 /**
@@ -136,7 +139,7 @@ void y_init_type (y_Runtime * rt, void * type, void * super_type, const char * n
         size_t class_size, size_t instance_size, size_t protected_size,
         void (* init_method) (void * self, y_Runtime * rt, apr_pool_t * pool,
             y_Error ** error),
-        void (* assign_method) (void * to, const void * from, y_Error ** error),
+        void * (* assign_method) (void * to, const void * from, y_Error ** error),
         void (* clear_method) (void * self, bool unref_objects));
 
 /**

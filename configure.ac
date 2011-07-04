@@ -21,4 +21,5 @@ Makefile
 yakka/libyakka-0.pc
 yakka/Makefile
 test/Makefile
+test/ootest/Makefile
 ])

@@ -57,7 +57,7 @@ y_WeakRef_init_type (y_Runtime * rt, void * type, void * super_type)
             sizeof (y_WeakRefProtected),
             NULL,  /* init */
             NULL,  /* assign */
-            NULL  /* clear */
+            NULL   /* clear */
             );
 }
 
