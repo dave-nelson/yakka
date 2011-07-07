@@ -12,26 +12,29 @@
 #include <stdbool.h>
 #include <apr_pools.h>
 
-typedef struct y_ObjectClass y_ObjectClass;
-typedef struct y_ObjectProtected y_ObjectProtected;
-
 struct y_Error;
 struct y_Runtime;
+struct y_ObjectProtected;
 
 /**
  * Structure for an object instance.
  */
 struct y_Object {
     /** The class type of an object (polymorphic) */
-    void              * type;
-    y_ObjectProtected * protect;
+    void                     * type;
+    /** The protected data structure for Object */
+    struct y_ObjectProtected * protect;
 };
+
+/**
+ * Structure for the Object class.
+ */
 typedef struct y_Object y_Object;
 
 /**
  * Get the class type for Object.
  */
-y_ObjectClass * y_Object_type (struct y_Runtime * rt);
+struct y_ObjectClass * y_Object_type (struct y_Runtime * rt);
 
 /**
  * Get an instance of an Object.
@@ -131,7 +134,8 @@ struct y_Runtime * y_get_runtime (const void * self);
  * implementation for the specified interface.
  *
  * @param  self  An object instance.
- * @param  name  Name of an interface.
+ * @param  interface_id  The identifier (integer) of an interface.  See @ref 
+ * y_Runtime_get_interface_id.
  * @return  A pointer to the instance's implementation of the specified 
  * interface, or NULL if not implemented.
  */
@@ -153,11 +157,30 @@ void * y_get_implementation (const void * self, int interface_id);
  */
 void * y_get_implementation_by_name (const void * self, const char * name);
 
+/**
+ * Safely cast an instance as a particular type.
+ *
+ * For safety the following checks are performed: that the object is non-null, 
+ * and that it is of the specified type or a sub-type (@ref y_is_a).  If so, a 
+ * cast to the target type is inserted in the code; if not, NULL is inserted.
+ *
+ * @param  self  An instance object.
+ * @param  get_type  The method by which a class type can be retrieved.  (This 
+ * will be used in checking that the object is of that type.)
+ * @param  cast_as  The cast to be inserted.
+ * @return  An appropriately cast object, or "NULL" if the object is null or of 
+ * an incompatible type.
+ */
 #define y_SAFE_CAST_INSTANCE(self, get_type, cast_as)               \
     ( (self && y_is_a (self, get_type (y_get_runtime (self)))) ?    \
       (cast_as *)self : NULL )
 
-/* Cast an instance as an Object */
+/**
+ * Use @ref y_SAFE_CAST_INSTANCE to cast an instance as an Object.
+ *
+ * @param  self  An object instance.
+ * @return  The instance cast as a pointer to y_Object.
+ */
 #define y_OBJECT(self) \
     y_SAFE_CAST_INSTANCE(self, y_Object_type, y_Object)
 

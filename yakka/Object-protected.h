@@ -24,14 +24,28 @@ struct y_WeakRef;
  * An Object instance only contains the information required to manage the 
  * instance, such as its pool, mutex, reference count etc.
  */
-struct y_ObjectProtected {
+typedef struct y_ObjectProtected {
+    /** Pointer to the Yakka runtime. */
     struct y_Runtime         * rt;
+    /** The pool for this instance. */
     apr_pool_t               * pool;
+    /** The mutex for this instance (NULL if threads are not enabled). */
     apr_thread_mutex_t       * mutex;
+    /** The number of references to this instance being held elsewhere. */
     int                        refcount;
+    /** The weak reference to this instance, if it exists; otherwise NULL. */
     struct y_WeakRef         * weak_ref;
+    /** Whether this object is in the process of being deleted. */
     bool                       deleted;
-};
+} y_ObjectProtected;
+
+/**
+ * Convenience macro to get the protected struct of an Object instance.
+ *
+ * @param  self  An instance of Object.
+ * @return  The protected data structure of the instance, if the instance is 
+ * not NULL; otherwise NULL.
+ */
 #define y_OBJECT_PROTECTED(self) \
     ( self ? ((y_ObjectProtected *)((y_Object *)self)->protect) : NULL )
 
@@ -47,9 +61,13 @@ struct y_ObjectProtected {
  * init method.
  */
 typedef struct y_InitMethodList {
+    /** The number of methods in this method list. */
     size_t    size;
+    /** The initialisation methods in this method list. */
     struct y_InitMethod {
+        /** The type that defined this method. */
         void    * type;
+        /** Pointer to the implementation of this method. */
         void   (* exec) (void * self, y_Runtime * rt, apr_pool_t * pool,
                 y_Error ** error);
     } * methods;
@@ -68,9 +86,13 @@ typedef struct y_InitMethodList {
  * instance variables that need to be copied from one Object to another.
  */
 typedef struct y_AssignMethodList {
+    /** The number of methods in this method list. */
     size_t    size;
+    /** The initialisation methods in this method list. */
     struct y_AssignMethod {
+        /** The type that defined this method. */
         void    * type;
+        /** Pointer to the implementation of this method. */
         void * (* exec) (void * to, const void * from,
                 y_Error ** error);
     } * methods;
@@ -88,26 +110,43 @@ typedef struct y_AssignMethodList {
  * instance variables that need to be cleared.
  */
 typedef struct y_ClearMethodList {
+    /** The number of methods in this method list. */
     size_t    size;
+    /** The initialisation methods in this method list. */
     struct y_ClearMethod {
+        /** The type that defined this method. */
         void    * type;
+        /** Pointer to the implementation of this method. */
         void   (* exec) (void * self, bool unref_objects);
     } * methods;
 } y_ClearMethodList;
 
-struct y_ObjectClass {
+/**
+ * The class structure for Object.
+ */
+typedef struct y_ObjectClass {
+    /** The super class structure for this class. */
     void               * super;
+    /** The human-readable name of the class. */
     const char         * name;
+    /** Pointer to the Yakka runtime. */
     y_Runtime          * rt;
+    /** The size of the class struct (bytes). */
     size_t               class_size;
+    /** The size of the public instance struct. */
     size_t               instance_size;  /* Size of an instance */
+    /** The size of the protected instance struct. */
     size_t               protected_size;   /* Size of the protected data structure */
 
+    /** List of initialisation methods for this class. */
     y_InitMethodList   * init;
+    /** List of assignment methods for this class. */
     y_AssignMethodList * assign;
+    /** List of clear methods for this class. */
     y_ClearMethodList  * clear;
+    /** The interfaces that this class implements (NULL if none). */
     y_Interfaces       * interfaces;
-};
+} y_ObjectClass;
 
 /**
  * Convenience method to initialise a class structure.
@@ -148,17 +187,32 @@ void y_init_type (y_Runtime * rt, void * type, void * super_type, const char * n
 void * y_create (struct y_Runtime * rt, const void * class_type,
         struct y_Error ** error);
 
-/* Get the type of an instance, cast as Class */
+/**
+ * Get the type of an instance, cast as a particular class. 
+ *
+ * @param  Class  The name of a class type.
+ * @param  instance  An object instance.
+ */
 #define TYPE_AS_CLASS(Class, instance) \
     ((Class *)((y_Object *)instance)->type)
 
-/* Return the type of an instance, cast as y_ObjectClass */
+/**
+ * The type of an instance, cast as y_ObjectClass
+ */
 #define TYPE_AS_OBJECT(instance) \
     (TYPE_AS_CLASS (y_ObjectClass, instance))
 
-/* Change the type of an object to another type. */
-#define y_bless(o, retype)    \
-    (retype ? ((((y_Object *)o)->type = retype)) : NULL)
+/**
+ * Change the type of an object to another type.
+ *
+ * @param  instance  An object instance.
+ * @param  retype  The type to which the instance should be re-cast.
+ */
+#define y_bless(instance, retype)    \
+    (retype ? ((((y_Object *)instance)->type = retype)) : NULL)
 
-/** @}@} */
+/** 
+ * @}
+ * @}
+ */
 #endif
