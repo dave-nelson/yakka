@@ -3,8 +3,8 @@
 
 #define ERRORSTR_SIZE 256
 
-static const char * y_Error_type_name = "y_ErrorClass";
-static y_ErrorClass * type;
+static const char * error_type_name = "y_ErrorClass";
+static y_ErrorClass * error_class;
 
 void
 y_Error_throw (y_Runtime * rt, y_Error ** error, 
@@ -19,7 +19,7 @@ y_Error_throw (y_Runtime * rt, y_Error ** error,
         return;
     }
 
-    new_error = y_create (rt, type, NULL);
+    new_error = y_create (rt, y_Error_type (rt), NULL);
     if ( new_error ) {
         pool = y_OBJECT_PROTECTED (new_error)->pool;
         protect = y_ERROR_PROTECTED (new_error);
@@ -119,7 +119,7 @@ y_Error_init_type (y_Runtime * rt, void * type, void * super_type)
             rt,
             type,
             super_type,
-            y_Error_type_name,
+            error_type_name,
             sizeof (y_ErrorClass),
             sizeof (y_Error),
             sizeof (y_ErrorProtected),
@@ -132,6 +132,6 @@ y_Error_init_type (y_Runtime * rt, void * type, void * super_type)
 void *
 y_Error_type (y_Runtime * rt)
 {
-    y_GET_OR_CREATE_SUBTYPE (rt, y_Error_type_name, y_ErrorClass,
-            y_Object_type, y_Error_init_type);
+    y_GET_OR_CREATE_SUBTYPE (rt, error_type_name, y_ErrorClass,
+            y_Object_type, y_Error_init_type, error_class);
 }

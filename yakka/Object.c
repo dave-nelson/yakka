@@ -4,8 +4,8 @@
 #include "Runtime.h"
 #include "WeakRef-protected.h"
 
-static const char * Object_type_name = "Object";
-static void * type = NULL;
+static const char * object_type_name = "Object";
+static y_ObjectClass * object_class = NULL;
 
 void y_Object_clear (void * self, bool unref_objects);
 void y_clear_object (void * self, bool unref_objects);
@@ -425,7 +425,7 @@ y_Object_init_type (y_Runtime * rt, void * type, void * super_type)
             rt,
             type,
             super_type,
-            Object_type_name,
+            object_type_name,
             sizeof (y_ObjectClass),
             sizeof (y_Object),
             sizeof (y_ObjectProtected),
@@ -438,16 +438,16 @@ y_Object_init_type (y_Runtime * rt, void * type, void * super_type)
 y_ObjectClass *
 y_Object_type (y_Runtime *rt)
 {
-    if ( ! type ) {
-        type = y_Runtime_init_type (
+    if ( ! object_class ) {
+        object_class = (y_ObjectClass *)y_Runtime_init_type (
                 rt,                     /* Runtime */
-                Object_type_name,       /* Name of type */
+                object_type_name,       /* Name of type */
                 sizeof (y_ObjectClass), /* Size of class struct */
                 NULL,                   /* Superclass */
                 y_Object_init_type,     /* Type initialisation callback */
-                &type
+                (void **)&object_class
                 );
     }
-    return type;
+    return object_class;
 }
 

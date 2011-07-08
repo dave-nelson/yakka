@@ -1,7 +1,7 @@
 #include "Alpha-protected.h"
 
-static char * Alpha_type_name = "Alpha";
-static AlphaClass * type = NULL;
+static char * alpha_type_name = "Alpha";
+static AlphaClass * alpha_class = NULL;
 
 Alpha *
 Alpha_new (y_Runtime * rt, int iota,
@@ -42,7 +42,7 @@ Alpha_init_type (y_Runtime * rt, void * type, void * super_type)
             rt,
             type,
             super_type,
-            Alpha_type_name,
+            alpha_type_name,
             sizeof (AlphaClass),
             sizeof (Alpha),
             sizeof (AlphaProtected),
@@ -55,6 +55,6 @@ Alpha_init_type (y_Runtime * rt, void * type, void * super_type)
 AlphaClass *
 Alpha_type (y_Runtime * rt)
 {
-    y_GET_OR_CREATE_SUBTYPE (rt, Alpha_type_name, AlphaClass, y_Object_type,
-            Alpha_init_type);
+    y_GET_OR_CREATE_SUBTYPE (rt, alpha_type_name, AlphaClass, y_Object_type,
+            Alpha_init_type, alpha_class);
 }

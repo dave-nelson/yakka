@@ -1,8 +1,8 @@
 #include "Gamma-protected.h"
 #include "Beta.h"
 
-static char * Gamma_type_name = "Gamma";
-static GammaClass * type = NULL;
+static char * gamma_type_name = "Gamma";
+static GammaClass * gamma_class = NULL;
 
 int Beta_do_action_impl (void * self);
 
@@ -20,7 +20,7 @@ Gamma_init_type (y_Runtime * rt, void * type, void * super_type)
             rt,
             type,
             super_type,
-            Gamma_type_name,
+            gamma_type_name,
             sizeof (GammaClass),
             sizeof (Gamma),
             sizeof (GammaProtected),
@@ -51,6 +51,6 @@ GammaClass *
 Gamma_type (y_Runtime * rt)
 {
 
-    y_GET_OR_CREATE_SUBTYPE (rt, Gamma_type_name, GammaClass, y_Object_type,
-            Gamma_init_type);
+    y_GET_OR_CREATE_SUBTYPE (rt, gamma_type_name, GammaClass, y_Object_type,
+            Gamma_init_type, gamma_class);
 }

@@ -1,8 +1,8 @@
 #include "WeakRef-protected.h"
 #include "Object-protected.h"
 
-static y_WeakRefClass * type;
-static char * y_WeakRef_type_name = "y_WeakRef";
+static char * weak_ref_type_name = "y_WeakRef";
+static y_WeakRefClass * weak_ref_class = NULL;
 
 y_WeakRef * y_WeakRef_new (y_Runtime * rt, void * instance,
         y_Error ** error)
@@ -51,7 +51,7 @@ y_WeakRef_init_type (y_Runtime * rt, void * type, void * super_type)
             rt,
             type,
             super_type,
-            y_WeakRef_type_name,
+            weak_ref_type_name,
             sizeof (y_WeakRefClass),
             sizeof (y_WeakRef),
             sizeof (y_WeakRefProtected),
@@ -64,6 +64,6 @@ y_WeakRef_init_type (y_Runtime * rt, void * type, void * super_type)
 y_WeakRefClass *
 y_WeakRef_type (y_Runtime * rt)
 {
-    y_GET_OR_CREATE_SUBTYPE (rt, y_WeakRef_type_name, y_WeakRefClass,
-            y_Object_type, y_WeakRef_init_type);
+    y_GET_OR_CREATE_SUBTYPE (rt, weak_ref_type_name, y_WeakRefClass,
+            y_Object_type, y_WeakRef_init_type, weak_ref_class);
 }
