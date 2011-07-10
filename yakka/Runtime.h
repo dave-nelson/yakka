@@ -92,9 +92,12 @@ void * y_Runtime_init_type (y_Runtime * rt, const char * type_name,
  * @param  Class  The class' struct.
  * @param  get_super  Method to get the super type.
  * @param  type_init  Class initialisation method.
+ * @param  type  The name of the variable to which the class stucture will be 
+ * assigned.
  * @return  The type identified by type_name.
  */
-#define y_GET_OR_CREATE_SUBTYPE(rt, type_name, Class, get_super, type_init) \
+#define y_GET_OR_CREATE_SUBTYPE(rt, type_name, Class, get_super, type_init,     \
+        type)                                               \
     do {                                                    \
         if ( ! type ) {                                     \
             type = y_Runtime_init_type(                     \
@@ -103,10 +106,10 @@ void * y_Runtime_init_type (y_Runtime * rt, const char * type_name,
                     sizeof (Class),                         \
                     get_super (rt),                         \
                     type_init,                              \
-                    (void **)&type                          \
+                    (void **)& type                         \
                     );                                      \
         }                                                   \
-        return type;                                        \
+        return (Class *)type;                               \
     } while (0)
 
 /**
