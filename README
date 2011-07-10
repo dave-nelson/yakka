@@ -1,0 +1,92 @@
+YAKKA
+=====
+
+Yakka is a library that facilitates object-oriented software development in the 
+C programming language.
+
+Yakka is based on the Apache Portable Runtime <http://apr.apache.org>.  It uses 
+features provided by APR -- in particular memory pools -- and is intended to be 
+useful for writing modules for the Apache server as well as stand-alone 
+applications.
+
+
+Features
+--------
+
+Yakka provides support for the following:
+
+ - Encapsulation: the separation of public, protected and private members.
+ - Single inheritance from a super class.
+ - Multiple implementation of interfaces (similar in concept to Java).
+ - Support for fundamental object operations -- initialisation, assignment and 
+   copying -- provided by the Object base class, and extensible by sub classes.
+ - Memory management implemented via reference counting but backed up by APR 
+   pools.  Objects can either be cleaned up in an orderly fashion (deleted when 
+   they are no longer referenced) or when their pool is destroyed.
+ - Weak (advisory) references, containing pointers that are nullified when the 
+   referent goes away.
+ - Support for thread safety: object locking.  Objects are locked by default 
+   during various operations that tend to involve sharing, such as referencing, 
+   and can be locked manually at point.  (Thread safety can be disabled for 
+   performance reasons, in applications where it is not required.)
+ - An error management system, providing similar functionality to the 
+   exceptions of other languages.
+
+
+Usage
+-----
+
+Yakka is designed for use when implementing Apache HTTPD modules; however it 
+works equally well for other types of application, including standalone 
+programs.
+
+Yakka is intended to be compatible with C programs and libraries: in 
+implementing an object-oriented programming system, it does not override, 
+interfere with or reimplement elements of the C language or standard libraries.  
+Yakka is just C.
+
+Yakka is not particularly intended for C++ development.  C++ offers its own 
+object-oriented programming system, so it is anticipated that C++ developers 
+would be well suited to use the features of the C++ language and standard 
+libraries, not Yakka.  In fact, Yakka could be considered as an alternative to 
+C++.  It offers some advantages similar to those of C++ (and even goes beyond 
+what C++ provides in some respects) while maintaining the simplicity of C.
+
+
+Installation
+------------
+
+Yakka uses the GNU build system ("Autotools").  It requires a POSIX-like 
+environment to be built and run.
+
+The script `autogen.sh` can be run once from the root of the Yakka distribution 
+to initialise the project.  Then the standard commands `./configure`, `make` 
+and `make install` can be used to build and install it.  See the file INSTALL 
+for more details.
+
+Yakka provides a pkg-config 
+<http://www.freedesktop.org/wiki/Software/pkg-config> specification, enabling 
+easy integration into other projects.
+
+
+Getting started
+---------------
+
+One of the best ways to see Yakka in use is to examine the unit tests in the 
+test/ directory of the Yakka distribution.  As well as verifying the 
+functionality of the library, the unit tests serve to demonstrate how different 
+features of the library can be utilised in practice.
+
+The Yakka API is comprehensively documented in its headers.  Use Doxygen 
+<http://www.stack.nl/~dimitri/doxygen/> to generate API documentation (a 
+Doxyfile is provided in the root directory of the 
+distribution).
+
+
+Copyright
+---------
+
+All original work in the Yakka distribution is copyright David Robert Nelson 
+<urbanus@240gl.org>, 2011.  Yakka is distributed under the terms of the Apache 
+License, version 2.0.
+
