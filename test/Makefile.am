@@ -18,7 +18,8 @@ AM_CFLAGS =\
 test_programs = 		\
 	test_error		\
 	test_object		\
-	test_interface
+	test_interface		\
+	test_method
 
 noinst_PROGRAMS = $(test_programs)
 
@@ -30,6 +31,9 @@ test_object_LDADD = $(test_ldadd)
 
 test_interface_SOURCES = test_interface.c
 test_interface_LDADD = $(test_ldadd)
+
+test_method_SOURCES = test_method.c
+test_method_LDADD = $(test_ldadd)
 
 check: $(test_programs)
 	teststatus=0; 						\
