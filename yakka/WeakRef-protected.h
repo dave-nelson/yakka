@@ -43,6 +43,17 @@ y_WeakRef * y_WeakRef_new (y_Runtime * rt, void * instance,
         y_Error ** error);
 
 /**
+ * Unset a weak reference.
+ *
+ * This method simply sets the pointer to the referent to NULL.  This method is 
+ * protected because it should only be called from within Object, when an 
+ * instance has a weak reference and that instance is about to be destroyed.
+ *
+ * @param  self  A weak reference.
+ */
+void y_WeakRef_unset (y_WeakRef * self);
+
+/**
  * @}
  * @}
  */

@@ -19,7 +19,8 @@ test_programs = 		\
 	test_error		\
 	test_object		\
 	test_interface		\
-	test_method
+	test_method		\
+	test_weak_ref
 
 noinst_PROGRAMS = $(test_programs)
 
@@ -34,6 +35,9 @@ test_interface_LDADD = $(test_ldadd)
 
 test_method_SOURCES = test_method.c
 test_method_LDADD = $(test_ldadd)
+
+test_weak_ref_SOURCES = test_weak_ref.c
+test_weak_ref_LDADD = $(test_ldadd)
 
 check: $(test_programs)
 	teststatus=0; 						\

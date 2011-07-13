@@ -294,6 +294,9 @@ y_unref (void * self)
         }
         y_unlock (obj);
         if ( has_weak_ref ) {
+            if ( do_cleanup ) {
+                y_WeakRef_unset (obj->protect->weak_ref);
+            }
             y_unlock (obj->protect->weak_ref);
         }
     }

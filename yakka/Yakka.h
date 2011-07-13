@@ -4,6 +4,7 @@
 #include "Error.h"
 #include "Runtime.h"
 #include "Object.h"
+#include "WeakRef.h"
 
 /**  \mainpage
  *

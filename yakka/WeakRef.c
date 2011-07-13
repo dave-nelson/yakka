@@ -17,6 +17,14 @@ y_WeakRef * y_WeakRef_new (y_Runtime * rt, void * instance,
     return ref;
 }
 
+void
+y_WeakRef_unset (y_WeakRef * self)
+{
+    y_WeakRef * ref = y_WEAK_REF (self);
+    y_WeakRefProtected * prot = (y_WeakRefProtected *)y_OBJECT_PROTECTED (ref);
+    prot->target = NULL;
+}
+
 void *
 y_WeakRef_deref (void * self)
 {
