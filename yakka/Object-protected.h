@@ -68,7 +68,7 @@ typedef struct y_InitMethodList {
         /** The type that defined this method. */
         void    * type;
         /** Pointer to the implementation of this method. */
-        void   (* exec) (void * self, y_Runtime * rt, apr_pool_t * pool,
+        void   (* exec) (void * self,
                 y_Error ** error);
     } * methods;
 } y_InitMethodList;

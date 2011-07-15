@@ -101,9 +101,10 @@ y_create (y_Runtime *rt, const void * class_type,
             struct y_InitMethod method = init->methods[i];
 
             if ( y_bless (obj, method.type ) ) {
-                method.exec (obj, rt, pool, error);
-                if ( error && *error )
+                method.exec (obj, error);
+                if ( error && *error ) {
                     goto cleanup;
+                }
             }
         }
     }
