@@ -68,8 +68,7 @@ typedef struct y_InitMethodList {
         /** The type that defined this method. */
         void    * type;
         /** Pointer to the implementation of this method. */
-        void   (* exec) (void * self,
-                y_Error ** error);
+        void   (* exec) (void * self, y_Error ** error);
     } * methods;
 } y_InitMethodList;
 
@@ -176,10 +175,9 @@ typedef struct y_ObjectClass {
  */
 void y_init_type (y_Runtime * rt, void * type, void * super_type, const char * name, 
         size_t class_size, size_t instance_size, size_t protected_size,
-        void (* init_method) (void * self, y_Runtime * rt, apr_pool_t * pool,
-            y_Error ** error),
+        void   (* init_method  ) (void * self, y_Error ** error),
         void * (* assign_method) (void * to, const void * from, y_Error ** error),
-        void (* clear_method) (void * self, bool unref_objects));
+        void   (* clear_method ) (void * self, bool unref_objects));
 
 /**
  * No-arg constructor for a given type.

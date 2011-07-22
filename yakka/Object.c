@@ -379,11 +379,9 @@ y_get_implementation_by_name (const void * self, const char * name)
 void
 y_init_type (y_Runtime * rt, void * type, void * super_type, const char * name, 
         size_t class_size, size_t instance_size, size_t protected_size,
-        void (* init_method) (void * self, y_Runtime * rt, apr_pool_t * pool,
-            y_Error ** error),
-        void * (* assign_method) (void * to, const void * from,
-            y_Error ** error),
-        void (* clear_method) (void * self, bool unref_objects))
+        void   (* init_method  ) (void * self, y_Error ** error),
+        void * (* assign_method) (void * to, const void * from, y_Error ** error),
+        void   (* clear_method ) (void * self, bool unref_objects))
 {
     y_ObjectClass * object_type = (y_ObjectClass *)type;
     y_ObjectClass * super_type_ = (y_ObjectClass *)super_type;
