@@ -46,7 +46,7 @@ test_Error_type ()
     void * error_type1 = y_Error_type (rt);
     void * error_type2 = y_Error_type (rt);
 
-    printf ("\tTest the creation/acquisition of the Error class type (%d)\n",
+    printf ("Test the creation/acquisition of the Error class type (%d)\n",
             __LINE__);
 
     /* Was type successfully created/acquired? */
@@ -63,7 +63,7 @@ test_Error_throw ()
 {
     y_Error * error = NULL;
 
-    printf ("\tTest throwing an error (%d)\n", __LINE__);
+    printf ("Test throwing an error (%d)\n", __LINE__);
 
     y_Error_throw (rt, &error, __FILE__, __LINE__, 
             fixtures[0].code, fixtures[0].description);
@@ -94,7 +94,7 @@ test_ignore_throw ()
 {
     y_Error ** error = NULL;
 
-    printf ("\tTest ignoring thrown errors (%d)\n", __LINE__);
+    printf ("Test ignoring thrown errors (%d)\n", __LINE__);
 
     y_Error_throw (rt, error, __FILE__, __LINE__,
             1, "Some kind of error");
@@ -109,7 +109,7 @@ test_Error_cause ()
 {
     y_Error * error = NULL;
 
-    printf ("\tTest stacked errors (%d)\n", __LINE__);
+    printf ("Test stacked errors (%d)\n", __LINE__);
 
     /* Throw all errors */
     int i = 0;
@@ -173,7 +173,7 @@ test_Error_throw_apr ()
     y_Error * error = NULL;
     char buf[256];
 
-    printf ("\tTest throwing an error from an APR method (%d)\n", __LINE__);
+    printf ("Test throwing an error from an APR method (%d)\n", __LINE__);
 
     /* The "good" method always succeeds */
     assert (! y_Error_throw_apr (rt, &error, __FILE__, __LINE__,
@@ -196,13 +196,11 @@ int main ()
 {
     setup ();
 
-    printf ("Error tests: start (%s)\n", __FILE__);
     test_Error_type ();
     test_Error_throw ();
     test_Error_cause ();
     test_ignore_throw ();
     test_Error_throw_apr ();
-    printf ("Error tests: end\n");
 
     teardown ();
 

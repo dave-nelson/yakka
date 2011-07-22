@@ -20,7 +20,8 @@ test_programs = 		\
 	test_object		\
 	test_interface		\
 	test_method		\
-	test_weak_ref
+	test_weak_ref		\
+	test_members
 
 noinst_PROGRAMS = $(test_programs)
 
@@ -39,6 +40,9 @@ test_method_LDADD = $(test_ldadd)
 test_weak_ref_SOURCES = test_weak_ref.c
 test_weak_ref_LDADD = $(test_ldadd)
 
+test_members_SOURCES = test_members.c
+test_members_LDADD = $(test_ldadd)
+
 check: $(test_programs)
 	teststatus=0; 						\
 	progfailed=""; 						\
@@ -52,7 +56,7 @@ check: $(test_programs)
 			progfailed="$$progfailed $$p"; 		\
 		fi; 						\
 	done;							\
-	echo ""; echo "----------";				\
+	echo "----------";					\
 	if test $$teststatus != 0; then				\
 		echo "Programs failed:$$progfailed";		\
 	fi;							\

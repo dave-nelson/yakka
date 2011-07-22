@@ -4,12 +4,18 @@ static char * alpha_type_name = "Alpha";
 static AlphaClass * alpha_class = NULL;
 
 Alpha *
-Alpha_new (y_Runtime * rt, int iota,
+Alpha_new (y_Runtime * rt, int a,
         y_Error ** error)
 {
     Alpha * self = (Alpha *)y_create (rt, Alpha_type (rt), error);
-    self->iota = iota;
+    Alpha_set (self, a, error);
     return self;
+}
+
+void
+Alpha_set (Alpha * self, int a, y_Error ** error)
+{
+    self->a = a;
 }
 
 void *
@@ -20,7 +26,7 @@ Alpha_assign (void * to, const void * from,
     const Alpha * alpha_from = ALPHA (from);
 
     if ( alpha_to && alpha_from ) {
-        alpha_to->iota = alpha_from->iota;
+        alpha_to->a = alpha_from->a;
     }
     return to;
 }
@@ -31,7 +37,7 @@ Alpha_clear (void * self, bool unref_objects)
     Alpha * alpha = ALPHA (self);
 
     if ( alpha ) {
-        alpha->iota = 0;
+        alpha->a = 0;
     }
 }
 

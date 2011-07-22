@@ -23,7 +23,10 @@ libootest_la_SOURCES = 		\
 	Beta.c			\
 	Gamma.h			\
 	Gamma-protected.h	\
-	Gamma.c
+	Gamma.c			\
+	Delta.h			\
+	Delta-protected.h	\
+	Delta.c
 
 libootest_la_LIBADD = $(YAKKA_LIBS)			\
 	$(top_builddir)/yakka/libyakka-0.la

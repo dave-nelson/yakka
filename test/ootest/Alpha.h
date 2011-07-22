@@ -8,7 +8,7 @@ typedef struct AlphaProtected AlphaProtected;
 
 typedef struct Alpha {
     y_Object object;
-    int      iota;
+    int      a;
 } Alpha;
 
 /**
@@ -20,6 +20,11 @@ AlphaClass * Alpha_type (y_Runtime * rt);
  * Create a new instance of Alpha.
  */
 Alpha * Alpha_new (y_Runtime * rt, int iota, y_Error ** error);
+
+/**
+ * Set the properties of an Alpha instance.
+ */
+void Alpha_set (Alpha * self, int a, y_Error ** error);
 
 #define ALPHA(self) \
     y_SAFE_CAST_INSTANCE(self, Alpha_type, Alpha)

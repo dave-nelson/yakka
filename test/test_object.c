@@ -41,13 +41,10 @@ test_simple_object ()
 int
 main ()
 {
-    printf ("Object tests: start (%s)\n\n", __FILE__);
     setup ();
 
     test_simple_object ();
 
     teardown ();
-    printf ("\nObject tests: end\n");
-
     return 0;
 }
